@@ -70,7 +70,11 @@ class RedisDriver extends AbstractDriver implements DriverTtlInterface
      */
     protected function createLock()
     {
-        return $this->redisInstance->setex($this->keyName, isset($this->options['ttl']) ? $this->options['ttl'] : 0, self::VALUE_TO_STORE);
+        if (!isset($this->options['ttl']) || $this->options['ttl'] <= 0) {
+            return $this->redisInstance->set($this->keyName, self::VALUE_TO_STORE);
+        } else {
+            return $this->redisInstance->setex($this->keyName, isset($this->options['ttl']) ? $this->options['ttl'] : 0, self::VALUE_TO_STORE);
+        }
     }
 
     /**
