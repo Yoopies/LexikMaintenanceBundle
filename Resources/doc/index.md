@@ -1,46 +1,10 @@
 Installation
 ============
 
-## Standard Edition Style
-
-If you are using the `deps` file to manage your project's dependencies,
-just add the following lines to it:
-
-    [LexikMaintenanceBundle]
-        git=git://github.com/lexik/LexikMaintenanceBundle.git
-        target=bundles/Lexik/Bundle/MaintenanceBundle
-
-### Add the namespace in the autoloader
-
-You must register in your autoloader:
-
-
-    <?php
-
-    // app/autoload.php
-    $loader->registerNamespaces(array(
-        'Lexik'            => __DIR__.'/../vendor/bundles',
-        // ...
-    ));
-
-
-## Install using composer.json
-
-If you are using composer to manage your project, just add the following
-line to your composer.json file
-
-    {
-        "require": {
-            "lexik/maintenance-bundle": "dev-master"
-        }
-    }
-
-Then update the vendor libraries:
+## Install it via composer
 
 ```shell
-composer.phar update
-# OR
-composer.phar update lexik/maintenance-bundle # to only update the bundle
+php composer.phar require lexik/maintenance-bundle
 ```
 
 
@@ -86,7 +50,8 @@ The ttl (time to life) option is optional everywhere, it is used to indicate the
 
              # File driver
             class: '\Lexik\Bundle\MaintenanceBundle\Drivers\FileDriver'                # class for file driver
-            options: {file_path: %kernel.root_dir%/cache/lock}                         # file_path is the complete path for create the file
+            options: {file_path: %kernel.root_dir%/../app/cache/lock}                  # file_path is the complete path for create the file (Symfony < 3.0)
+            options: {file_path: %kernel.root_dir%/../var/cache/lock}                  # file_path is the complete path for create the file (Symfony >= 3.0)
 
              # Shared memory driver
             class: '\Lexik\Bundle\MaintenanceBundle\Drivers\ShmDriver'                 # class for shared memory driver
@@ -99,15 +64,16 @@ The ttl (time to life) option is optional everywhere, it is used to indicate the
             class: 'Lexik\Bundle\MaintenanceBundle\Drivers\DatabaseDriver'             # class for database driver
 
             # Option 1 : for doctrine
-            options: {connection: custom}                                            # Optional. You can choice an other connection. Without option it's the doctrine default connection who will be used
+            options: {connection: custom}                                              # Optional. You can choice an other connection. Without option it's the doctrine default connection who will be used
 
             # Option 2 : for dsn, you must have a column ttl type datetime in your table.
             options: {dsn: "mysql:dbname=maintenance;host:localhost", table: maintenance, user: root, password: root}  # the dsn configuration, name of table, user/password
 
         #Optional. response code and status of the maintenance page
         response:
-            code: 503
-            status: "Service Temporarily Unavailable"
+            code: 503                                                                  # Http response code of Exception page
+            status: "Service Temporarily Unavailable"                                  # Exception page title
+            exception_message: "Service Temporarily Unavailable"                       # Message when Exception is thrown 
 
 
 ### Commands
@@ -144,7 +110,7 @@ In the listener, an exception is thrown when web site is under maintenance. This
 
 .. note::
 
-    You must remember that this only works if Symfony2 works.
+    You must remember that this only works if Symfony works.
 
 ----------------------
 
