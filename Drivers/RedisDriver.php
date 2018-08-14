@@ -90,7 +90,7 @@ class RedisDriver extends AbstractDriver implements DriverTtlInterface
      */
     public function isExists()
     {
-        return $this->redisInstance->exists($this->keyName) > 0;
+        return !empty($this->redisInstance->get($this->keyName));
     }
 
     /**
