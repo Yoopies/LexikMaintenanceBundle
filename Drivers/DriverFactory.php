@@ -29,17 +29,24 @@ class DriverFactory
      */
     protected $translator;
 
+    /**
+     * @var \Redis
+     */
+    protected $redis;
+
     const DATABASE_DRIVER = 'Lexik\Bundle\MaintenanceBundle\Drivers\DatabaseDriver';
+    const REDIS_DRIVER = 'Lexik\Bundle\MaintenanceBundle\Drivers\RedisDriver';
 
     /**
      * Constructor driver factory
      *
      * @param DatabaseDriver      $dbDriver The databaseDriver Service
-     * @param TranslatorInterface $translator The translator service
+     * @param TranslatorInterface\ $translator The translator service
+     * @param \Redis              $redis The redis service
      * @param array               $driverOptions Options driver
      * @throws \ErrorException
      */
-    public function __construct(DatabaseDriver $dbDriver, TranslatorInterface $translator, array $driverOptions)
+    public function __construct(DatabaseDriver $dbDriver, TranslatorInterface $translator, \Redis $redis, array $driverOptions)
     {
         $this->driverOptions = $driverOptions;
 
@@ -49,6 +56,7 @@ class DriverFactory
 
         $this->dbDriver = $dbDriver;
         $this->translator = $translator;
+        $this->redis = $redis;
     }
 
     /**
@@ -70,6 +78,10 @@ class DriverFactory
             $driver->setOptions($this->driverOptions['options']);
         } else {
             $driver = new $class($this->driverOptions['options']);
+        }
+
+        if ($class === self::REDIS_DRIVER) {
+            $driver->setRedis($this->redis);
         }
 
         $driver->setTranslator($this->translator);

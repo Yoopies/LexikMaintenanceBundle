@@ -44,22 +44,8 @@ class RedisDriver extends AbstractDriver implements DriverTtlInterface
             throw new \InvalidArgumentException('$options[\'key_name\'] must be defined if Driver Redis configuration is used');
         }
 
-        if ( ! isset($options['host'])) {
-            throw new \InvalidArgumentException('$options[\'host\'] must be defined if Driver Redis configuration is used');
-        }
-
-        if ( ! isset($options['port'])) {
-            throw new \InvalidArgumentException('$options[\'port\'] must be defined if Driver Redis configuration is used');
-        } elseif (! is_int($options['port'])) {
-            throw new \InvalidArgumentException('$options[\'port\'] must be an integer if Driver Redis configuration is used');
-        }
-
         if (null !== $options) {
             $this->keyName = $options['key_name'];
-            $this->redisInstance = new \Predis\Client([
-                'host' => $options['host'],
-                'port' => $options['port'],
-            ]);
         }
 
         $this->options = $options;
@@ -83,6 +69,14 @@ class RedisDriver extends AbstractDriver implements DriverTtlInterface
     protected function createUnlock()
     {
         return $this->redisInstance->del($this->keyName) > 0;
+    }
+
+    /**
+     * @param \Redis $redis
+     */
+    public function setRedis(\Redis $redis)
+    {
+        $this->redisInstance = $redis;
     }
 
     /**
